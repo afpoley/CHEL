@@ -1,5 +1,6 @@
 ## Spatial Join Example (Point-in-Hex Join)
 
+```python
 import geopandas as gpd
 
 # -------------------------------------------------------------------
@@ -12,7 +13,7 @@ import geopandas as gpd
 # ]
 #
 # Convert list of dicts → GeoDataFrame
-# (Replace this section with your actual participant data source)
+# (Replace this with your actual participant data source)
 import pandas as pd
 from shapely.geometry import Point
 
@@ -28,24 +29,23 @@ participant_gdf = gpd.GeoDataFrame(
 # -------------------------------------------------------------------
 chel = gpd.read_file("CHEL_2022.gpkg")
 
-# Reproject CHEL hexagons if needed
+# Reproject if needed
 if chel.crs != participant_gdf.crs:
     chel = chel.to_crs(participant_gdf.crs)
 
 # -------------------------------------------------------------------
-# 3. Perform spatial join: assign each participant to a hexagon
+# 3. Spatial join: assign each participant to its hexagon
 # -------------------------------------------------------------------
 joined = gpd.sjoin(
     participant_gdf,
     chel,
-    how="left",       # keep all participants
-    predicate="intersects"   # point-in-polygon
+    how="left",
+    predicate="intersects"   # point-in-polygon join
 )
 
 # -------------------------------------------------------------------
-# 4. (Optional) Select final columns or rename CHEL ID
+# 4. Optional: keep only selected columns
 # -------------------------------------------------------------------
-# Example: keep participant_id + hex_id
 output = joined[["participant_id", "h3_hex_id", "geometry"]]
 
 print(output.head())
